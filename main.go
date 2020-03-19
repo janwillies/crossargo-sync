@@ -92,15 +92,11 @@ func main() {
 							server = string(v)
 						}
 					}
-					b, err := json.Marshal(argoEksConfig)
+					argoEksConfigJSON, err := json.Marshal(argoEksConfig)
 					if err != nil {
 						fmt.Println(err)
 						return
 					}
-
-					// needs to be base64 formatted
-					argoEksConfigB64 := b64.StdEncoding.EncodeToString(b)
-					// fmt.Println("JSON: ", string(b))
 
 					// write kubernetes secret to argocd namespace
 					// (so that argocd picks it up as a cluster)
@@ -120,7 +116,7 @@ func main() {
 							},
 						},
 						Data: map[string][]byte{
-							"config": []byte(argoEksConfigB64),
+							"config": []byte(argoEksConfigJSON),
 							"name":   []byte("arn:aws:eks:eu-west-1:f00bar:cluster/" + argoEksConfig.AwsAuthConfig.ClusterName),
 							"server": []byte(server),
 						},
