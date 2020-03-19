@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: crossargo-sync
+  name: crossargo-sync
+  namespace: user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crossargo-sync
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: crossargo-sync
+    spec:
+      serviceAccount: crossargo-sync
+      containers:
+      - image: github.com/janwillies/crossargo-sync
+        name: crossargo-sync
+        resources: {}
+status: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: user
+  name: crossargo-sync
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: secret-reader
+  namespace: user
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-secrets
+  namespace: user
+subjects:
+- kind: ServiceAccount
+  name: crossargo-sync
+  namespace: user
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: secret-writer
+  namespace: argocd
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["create", "update", "delete", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: write-secrets
+  namespace: argocd
+subjects:
+- kind: ServiceAccount
+  name: crossargo-sync
+  namespace: user
+roleRef:
+  kind: Role
+  name: secret-writer
+  apiGroup: rbac.authorization.k8s.io
