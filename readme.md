@@ -1,5 +1,5 @@
 # Crossplane ArgoCD Sync
-This is a Kubernetes controller which watches for newly created EKS clusters and provisions software to it via gitops.
+This is a Kubernetes controller which watches for newly created EKS clusters and configures ArgoCD to provision software to it via gitops.
 
 When a new EKS Cluster is created in Crossplane, this controller creates the following:
 1. a Kubernetes cluster in ArgoCD
