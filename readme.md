@@ -11,7 +11,6 @@ All manifests in the git repo are automatically deployed to the EKS cluster
 ## build and deploy the controller
 Use [ko](https://github.com/google/ko) to build and deploy:
 ```bash
-kustomize build deploy/base > deployment.yaml
 export KO_DOCKER_REPO=foobar.dkr.ecr.eu-west-1.amazonaws.com/crossargo-sync
 ko apply -f deployment.yaml
 ```
